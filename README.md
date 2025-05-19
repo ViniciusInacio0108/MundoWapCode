@@ -1,16 +1,105 @@
-# mundo_wap_teste
+# Mundo WAP Test
 
-A new Flutter project.
+## Instalação
 
-## Getting Started
+1. **Pré-requisitos**
+   - Flutter SDK `3.5.0`
+   - Dart SDK compatível
+   - Android Studio ou VSCode configurado para Flutter
+   - Emulador ou dispositivo físico para testes
 
-This project is a starting point for a Flutter application.
+2. **Clonando o projeto**
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd <NOME_DO_PROJETO>
+```
 
-A few resources to get you started if this is your first Flutter project:
+3. **Instalando dependências**
+```bash
+flutter pub get
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+4. **Gerando código com build_runner**
+```bash
+flutter pub run build_runner build --delete-conflicting-outputs
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## Configuração
+
+- Certifique-se de que o emulador ou dispositivo está rodando.
+
+- O banco de dados local utiliza padrão Singleton e suas configuraçõpes estão localizadas dentro da pasta `data/database`.
+
+---
+
+## Inicialização
+
+Execute o projeto com:
+
+```bash
+flutter run
+```
+
+ou 
+
+```bash
+flutter run --release
+```
+
+para poder utilizar a versão final do app.
+
+O app iniciará pela tela de login.
+
+---
+
+## Estrutura do Projeto
+
+```
+lib/
+├── data/
+│   ├── database/         # Configuração do DB
+│   ├── models/           # Modelos usados para API e banco de dados 
+│   ├── services/         # Serviços externos 
+│   └── repositories/     # Implementações dos repositórios
+│
+├── domain/               # Modelos utilizados na lógica de domínio
+│
+├── ui/                   # Parte de UI (telas, componentes e viewmodels)
+│
+│
+├── utils/                # Utilitários e auxiliadores
+│
+│
+└── main.dart             # Ponto de entrada da aplicação
+```
+
+---
+
+## Funcionalidades
+
+### 1. **Login**
+- Usuário insere `username` e `senha`.
+- Ao logar, é feito um request via `Dio` para obter as tarefas associadas.
+
+### 2. **Home**
+- Lista de tarefas exibida com base nos dados:
+  - Do endpoint de login.
+  - Do banco local (`SQFlite`), caso estejam salvos.
+- Cada tarefa possui um marcador de status: **Realizada** ou **Incompleta**.
+
+### 3. **Edição de Tarefas**
+- Usuário pode editar e concluir tarefas.
+- Os campos editados são salvos localmente imediatamente (autosave) para evitar perda de dados caso o app seja fechado.
+
+---
+
+## Dependências Utilizadas
+
+- **provider**: Gerenciamento de estado.
+- **dio**: Requisições HTTP.
+- **sqflite**: Banco de dados local.
+- **shared_preferences**: Armazenamento local leve.
+- **json_serializable + build_runner**: Serialização automatizada de modelos.
+- **flutter_multi_formatter**: Máscaras e formatações de texto.
