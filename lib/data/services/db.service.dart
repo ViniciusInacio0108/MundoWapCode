@@ -9,36 +9,85 @@ import 'package:mundo_wap_teste/utils/utils.dart';
 /// For simpler data like Strings, use [SharedPreferencesService]
 class DBService {
   final TASK_TABLE = 'tasks';
+  final FIELDS_TABLE = 'fields';
 
-  Future<ResponseResult<List<TaskResponse>>> getTasks() async {
+  Future<ResponseResult<List<TaskResponse>>> getTasksWithFields() async {
     try {
       final db = await MyDB().database;
-      final task = await db.query(TASK_TABLE);
+      final tasksQuery = await db.query(TASK_TABLE);
+      final fieldsQuery = await db.query(FIELDS_TABLE);
 
-      return ResponseResult.ok(task.map((e) => TaskResponse.fromJson(e)).toList());
+      final fieldsByTaskId = <int, List<FieldTaskResponse>>{};
+      for (final fieldMap in fieldsQuery) {
+        final field = FieldTaskResponse.fromSQL(fieldMap);
+
+        fieldsByTaskId.putIfAbsent(field.task_id ?? -1, () => []).add(field);
+      }
+
+      final tasks = tasksQuery.map((taskMap) {
+        final data = TaskResponse.fromSQL(taskMap);
+        data.fields = fieldsByTaskId[data.id] ?? [];
+
+        return data;
+      }).toList();
+
+      return ResponseResult.ok(tasks);
     } on Exception catch (e) {
       return ResponseResult.error(e);
     }
   }
 
-  Future<ResponseResult<int>> insertTask(TaskResponse task) async {
+  Future<ResponseResult<bool>> saveTasksWithFields(List<TaskResponse> tasks) async {
     try {
       final db = await MyDB().database;
 
-      final id = await db.insert(TASK_TABLE, task.toSQLMap());
+      await db.transaction(
+        (txn) async {
+          final batch = txn.batch();
 
-      return ResponseResult.ok(id);
-    } on Exception catch (e) {
-      return ResponseResult.error(e);
-    }
-  }
+          for (final task in tasks) {
+            await txn.insert(TASK_TABLE, task.toSQLMap());
+            for (final field in task.fields) {
+              batch.insert(
+                FIELDS_TABLE,
+                field.toSQLMap(),
+              );
+            }
+          }
 
-  Future<ResponseResult<int>> updateTask(TaskResponse task) async {
-    try {
-      final db = await MyDB().database;
-      return ResponseResult.ok(
-        await db.update('tasks', task.toSQLMap(), where: 'id = ?', whereArgs: [task.id]),
+          await batch.commit(noResult: true);
+        },
       );
+
+      return ResponseResult.ok(true);
+    } on Exception catch (e) {
+      return ResponseResult.error(e);
+    }
+  }
+
+  Future<ResponseResult<TaskResponse>> updateTask(TaskResponse task) async {
+    try {
+      final db = await MyDB().database;
+
+      await db.transaction((txn) async {
+        await txn.update(
+          TASK_TABLE,
+          task.toSQLMap(),
+          where: 'id = ?',
+          whereArgs: [task.id],
+        );
+
+        for (final field in task.fields) {
+          await txn.update(
+            'fields',
+            field.toSQLMap(),
+            where: 'id = ? AND task_id = ?',
+            whereArgs: [field.id, task.id],
+          );
+        }
+      });
+
+      return ResponseResult.ok(task);
     } on Exception catch (e) {
       return ResponseResult.error(e);
     }

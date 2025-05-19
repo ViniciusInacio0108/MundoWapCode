@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:mundo_wap_teste/data/models/login_response.dart';
-import 'package:mundo_wap_teste/utils/mocks.dart';
 import 'package:mundo_wap_teste/utils/utils.dart';
 
 /// RemoteService is the class that controls all the external API calls to a remote server
@@ -45,7 +44,6 @@ class RemoteService {
         return ResponseResult.ok(LoginResponse.fromJson(response.data as Map<String, dynamic>));
       }
     } on Exception {
-      return ResponseResult.ok(LoginResponse.fromJson(MyMockResponses.login));
       return ResponseResult.error(Exception('Erro ocorreu ao tentar logar. Por favor, tente novamente.'));
     }
   }

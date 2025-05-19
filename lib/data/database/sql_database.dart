@@ -1,6 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+/// This class is used to manage all the [DB] connection, opening, closing and initialization.
+///
+/// It has a singleton desing pattern.
+///
+/// It initializes as of the first time is instanciated.
+///
+/// Also, the tables are defined here.
 class MyDB {
   static final MyDB _instance = MyDB._internal();
   static Database? _database;
@@ -34,18 +41,20 @@ class MyDB {
       CREATE TABLE tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         task_name TEXT NOT NULL,
+        done INTEGER NOT NULL,
         description TEXT NOT NULL
       );
     ''');
 
     await db.execute('''
       CREATE TABLE fields (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER NOT NULL,
         task_id INTEGER NOT NULL,
         label TEXT NOT NULL,
         value TEXT NOT NULL,
         required INTEGER NOT NULL,
         field_type TEXT NOT NULL,
+        PRIMARY KEY (id, task_id),
         FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
       );
     ''');
@@ -54,5 +63,12 @@ class MyDB {
   Future<void> close() async {
     final db = await database;
     db.close();
+  }
+
+  Future<void> deleteMyDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'database.db');
+
+    await deleteDatabase(path);
   }
 }
