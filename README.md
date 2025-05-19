@@ -100,6 +100,5 @@ lib/
 - **provider**: Gerenciamento de estado.
 - **dio**: Requisições HTTP.
 - **sqflite**: Banco de dados local.
-- **shared_preferences**: Armazenamento local leve.
 - **json_serializable + build_runner**: Serialização automatizada de modelos.
 - **flutter_multi_formatter**: Máscaras e formatações de texto.
