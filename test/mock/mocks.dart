@@ -1,3 +1,4 @@
+/// This class is used for mocking data for testing purposes.
 class MyMockResponses {
   static const Map<String, dynamic> login = {
     "success": true,
