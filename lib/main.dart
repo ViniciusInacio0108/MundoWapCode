@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mundo_wap_teste/data/database/sql_database.dart';
 import 'package:mundo_wap_teste/data/repositories/login/login_repository_remote.dart';
 import 'package:mundo_wap_teste/data/repositories/task/task_repository_local.dart';
 import 'package:mundo_wap_teste/data/services/api_client.service.dart';

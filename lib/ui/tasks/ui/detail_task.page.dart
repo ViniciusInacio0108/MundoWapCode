@@ -9,7 +9,6 @@ import 'package:mundo_wap_teste/ui/components/custom_text_form.components.dart';
 import 'package:mundo_wap_teste/ui/tasks/viewmodel/detail_task.viewmodel.dart';
 import 'package:mundo_wap_teste/ui/tasks/viewmodel/tasks.viewmodel.dart';
 import 'package:mundo_wap_teste/utils/response_result.dart';
-import 'package:mundo_wap_teste/utils/text_styles.dart';
 import 'package:provider/provider.dart';
 
 class DetailTaskPage extends StatefulWidget {
