@@ -21,9 +21,9 @@ class TaskField {
 
   static EFieldTaskType mapFieldTaskEnum(String fieldType) {
     switch (fieldType) {
-      case 'mask_price':
+      case 'mask_price' || 'EFieldTaskType.mask_price':
         return EFieldTaskType.mask_price;
-      case 'mask_date':
+      case 'mask_date' || 'EFieldTaskType.mask_date':
         return EFieldTaskType.mask_date;
       default:
         return EFieldTaskType.text;
